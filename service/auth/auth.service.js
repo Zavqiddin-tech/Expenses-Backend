@@ -2,13 +2,14 @@ const argon2 = require("argon2");
 const tokenService = require("./token.service");
 const userModel = require("../../model/user.model");
 const UserDto = require("../../dto/user.dto");
+const balansModel = require("../../model/balans.model");
 
 class AuthService {
   async regis(fName, lName, userName, password, activated, role) {
     // if (role === "admin") {
     //   throw new Error("admin mavjud");
     // }
-
+    
     const existUser = await userModel.findOne({ userName });
 
     if (existUser) {
@@ -40,7 +41,7 @@ class AuthService {
 
   async login(userName, password) {
     const user = await userModel.findOne({ userName });
-
+    
     if (!user) {
       throw new Error("User mavjud emas");
     }

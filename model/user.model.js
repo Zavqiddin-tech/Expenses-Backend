@@ -17,5 +17,3 @@ const userSchema = new Schema(
 );
 
 module.exports = model("User", userSchema);
-
-// companyId: { type: Schema.ObjectId, ref: "Company", required: true },

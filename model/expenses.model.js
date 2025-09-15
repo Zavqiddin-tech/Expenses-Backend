@@ -6,7 +6,8 @@ const expensesSchema = new Schema(
     body: { type: String, required: true },
     user: { type: Schema.ObjectId, ref: "User", required: true },
     category: { type: Schema.ObjectId, ref: "Category", required: true },
-    picture: [{ type: String  }],
+    pay: { type: Schema.ObjectId, ref: "Pay", required: true },
+    picture: [{ type: String, default: "" }],
   },
   { timestamps: true }
 );
