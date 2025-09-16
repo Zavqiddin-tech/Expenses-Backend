@@ -1,4 +1,5 @@
-const payModel = require("../models/pay.model");
+const payModel = require("../model/pay.model");
+const balansModel = require("../model/balans.model");
 
 class InvestService {
   async getAll(req, res) {
@@ -12,6 +13,10 @@ class InvestService {
   }
 
   async create(req, res) {
+    if (req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    }
+
     const payData = {
       amount: req.body.amount,
       method: 0,
@@ -23,8 +28,17 @@ class InvestService {
     }
 
     const newInvest = await payModel.create(payData);
+    const balans = await balansModel.findOne();
+    const updatedBalans = await balansModel.findByIdAndUpdate(
+      balans._id,
+      {
+        $inc: { amount: newInvest.amount },
+        $push: { history: newInvest._id },
+      },
+      { new: true }
+    );
 
-    return newInvest;
+    return { newInvest, updatedBalans };
   }
 }
 

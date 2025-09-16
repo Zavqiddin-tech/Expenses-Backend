@@ -4,7 +4,7 @@ const balansSchema = new Schema(
   {
     amount: { type: Number, default: 0 },
     user: { type: Schema.ObjectId, ref: "User", required: true },
-    category: {
+    department: {
       type: Number,
       enum: [0],
       required: true,

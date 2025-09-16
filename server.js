@@ -24,6 +24,7 @@ app.use(fileUpload({}));
 
 // API endpoints
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/invest", require("./routes/invest.routes"));
 app.use("/api/expenses", require("./routes/expenses.routes"));
 app.use("/api/category", require("./routes/category.routes"));
 app.use("/api/post", require("./routes/post.routes"));

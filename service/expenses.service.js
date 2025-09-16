@@ -15,16 +15,24 @@ class ExpensesService {
   }
 
   async create(req, res) {
+    if (req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    }
     const balans = await balansModel.findOne();
     if (balans.amount < req.body.amount) {
       throw new Error("Balansda pul yetarli emas");
     }
 
-    const pay = await payModel.create({
+    const payData = {
       amount: req.body.amount,
-      method: 1,
       user: req.user.id,
-    });
+      method: 1,
+    };
+    if (req.body.text) {
+      payData.text = req.body.text;
+    }
+
+    const pay = await payModel.create(payData);
 
     const expensesData = {
       title: req.body.title,
@@ -42,11 +50,11 @@ class ExpensesService {
     }
 
     const newExpenses = await expensesModel.create(expensesData);
-
-    const updatedBalans = await balansModel.findOneAndUpdate(
+    const updatedBalans = await balansModel.findByIdAndUpdate(
+      balans._id,
       {
         $inc: { amount: -pay.amount },
-        $unshift: { history: pay._id },
+        $push: { history: pay._id },
       },
       { new: true }
     );
