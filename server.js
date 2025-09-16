@@ -10,7 +10,7 @@ const app = express();
 
 // Rate limiting middleware
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 10 * 60 * 1000,
   max: 100,
 })
 
@@ -24,6 +24,7 @@ app.use(fileUpload({}));
 
 // API endpoints
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/balans", require("./routes/balans.routes"));
 app.use("/api/invest", require("./routes/invest.routes"));
 app.use("/api/expenses", require("./routes/expenses.routes"));
 app.use("/api/category", require("./routes/category.routes"));
