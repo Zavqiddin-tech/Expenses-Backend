@@ -5,12 +5,7 @@ const fileService = require("./file.service");
 
 class ExpensesService {
   async getAll(req, res) {
-    const limit = parseInt(req.query.limit);
-
-    const allExpensess = await expensesModel
-      .find({ user: req.user.id })
-      .sort({ createdAt: -1 })
-      .limit(limit);
+    const allExpensess = await expensesModel.find().sort({ createdAt: -1 }).populate("pay")
     return allExpensess;
   }
 
@@ -22,6 +17,8 @@ class ExpensesService {
     if (balans.amount < req.body.amount) {
       throw new Error("Balansda pul yetarli emas");
     }
+
+    console.log(req.files);
 
     const payData = {
       amount: req.body.amount,
@@ -40,14 +37,16 @@ class ExpensesService {
       category: req.body.category,
       pay: pay._id,
       user: req.user.id,
+      picture: []
     };
 
     if (req.files) {
-      const fileName = fileService.save(req.files);
-      expensesData = {
-        picture: Array.isArray(fileName) ? fileName : [...fileName],
-      };
+      console.log(req.files);
+      const fileName = await fileService.save(req.files);
+      expensesData.picture = Array.isArray(fileName) ? fileName : [...fileName];
     }
+
+    console.log(expensesData);
 
     const newExpenses = await expensesModel.create(expensesData);
     const updatedBalans = await balansModel.findByIdAndUpdate(

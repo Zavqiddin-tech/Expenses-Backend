@@ -9,6 +9,15 @@ class InvestController {
 			next(error);
 		}
 	}
+	
+	async getAllPay(req, res, next) {
+		try {
+			const allPays = await investService.getAllPay(req, res);
+			res.status(200).json(allPays);
+		} catch (error) {
+			next(error);
+		}
+	}
 
 	async create(req, res, next) {
 		try {

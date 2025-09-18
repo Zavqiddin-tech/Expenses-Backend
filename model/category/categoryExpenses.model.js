@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const categorySchema = new Schema(
+const categoryExpensesSchema = new Schema(
   {
     name: { type: String, required: true },
     user: { type: Schema.ObjectId, ref: "User", required: true },
@@ -8,4 +8,4 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("Category", categorySchema);
+module.exports = model("CategoryExpenses", categoryExpensesSchema);

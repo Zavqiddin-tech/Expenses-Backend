@@ -3,9 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 class FileService {
-  save(file) {
+  async save(file) {
     try {
-      const maxSize = 3 * 1024 * 1024;
+      const maxSize = 50 * 1024 * 1024;
       const allowedExtensions = [".jpg", ".jpeg", ".png"];
       const currentDir = __dirname;
       const staticDir = path.join(currentDir, "..", "static");
@@ -28,7 +28,7 @@ class FileService {
         }
         const fileName = uuidv4() + ".jpg";
         const filePath = path.join(staticDir, fileName);
-        picture.mv(filePath);
+        await picture.mv(filePath);
         fileNames.push(fileName);
       }
 

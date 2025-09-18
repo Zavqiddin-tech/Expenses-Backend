@@ -12,27 +12,31 @@ const app = express();
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 100,
-})
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser({}));
-app.use(limiter)
+app.use(limiter);
 app.use(express.static("static"));
 app.use(fileUpload({}));
-
 
 // API endpoints
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/balans", require("./routes/balans.routes"));
 app.use("/api/invest", require("./routes/invest.routes"));
 app.use("/api/expenses", require("./routes/expenses.routes"));
-app.use("/api/category", require("./routes/category.routes"));
-app.use("/api/post", require("./routes/post.routes"));
+app.use(
+  "/api/categoryExpenses",
+  require("./routes/category/categoryExpenses.routes")
+);
+app.use(
+  "/api/categoryBalans",
+  require("./routes/category/categoryBalans.routes")
+);
 
 //  Mieddleware
 app.use(errorMiddleware);
-
 
 const PORT = process.env.PORT || 4100;
 const bootstrap = async () => {
