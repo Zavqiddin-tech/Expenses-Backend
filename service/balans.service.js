@@ -6,7 +6,10 @@ class BalansService {
     return balans;
   }
 
-  async create(req, res) {}
+  async create(req, res) {
+    /* const balans = await balansModel.create({user: req.user.id})
+    return balans */
+  }
 }
 
 module.exports = new BalansService();

@@ -1,5 +1,6 @@
 const payModel = require("../model/pay.model");
 const balansModel = require("../model/balans.model");
+const categoryInvestModel = require("../model/category/categoryInvest.model")
 
 class InvestService {
   async getAll(req, res) {
@@ -18,8 +19,13 @@ class InvestService {
   }
 
   async create(req, res) {
+    console.log(req.params.id);
+    const isCategory = await categoryInvestModel.findById(req.params.id)
     if (req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    }
+    if(!isCategory) {
+      throw new Error("Sarmoya uchun kategoriya topilmadi");
     }
 
     const payData = {
@@ -32,18 +38,27 @@ class InvestService {
       payData.text = req.body.text;
     }
 
+
     const pay = await payModel.create(payData);
     const balans = await balansModel.findOne();
-    const updatedBalans = await balansModel.findByIdAndUpdate(
+    const newBalans = await balansModel.findByIdAndUpdate(
       balans._id,
       {
-        $inc: { amount: newInvest.amount },
+        $inc: { amount: pay.amount },
+        $push: { history: pay._id },
+      },
+      { new: true }
+    );
+    const newCategoryInvest = await categoryInvestModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $inc: { amount: pay.amount },
         $push: { history: pay._id },
       },
       { new: true }
     );
 
-    return { newInvest, updatedBalans };
+    return { pay, newBalans, newCategoryInvest };
   }
 }
 

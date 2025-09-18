@@ -31,8 +31,8 @@ app.use(
   require("./routes/category/categoryExpenses.routes")
 );
 app.use(
-  "/api/categoryBalans",
-  require("./routes/category/categoryBalans.routes")
+  "/api/categoryInvest",
+  require("./routes/category/categoryInvest.routes")
 );
 
 //  Mieddleware

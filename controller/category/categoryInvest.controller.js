@@ -1,6 +1,6 @@
-const categoryService = require("../../service/category/categoryExpenses.service");
+const categoryService = require("../../service/category/categoryInvest.service");
 
-class CategoryBalansController {
+class CategoryInvestController {
   async getAll(req, res, next) {
     try {
       const allCategories = await categoryService.getAll(req, res);
@@ -20,4 +20,4 @@ class CategoryBalansController {
   }
 }
 
-module.exports = new CategoryBalansController();
+module.exports = new CategoryInvestController();
