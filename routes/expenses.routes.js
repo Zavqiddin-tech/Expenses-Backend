@@ -4,6 +4,6 @@ const authorization = require("../middleware/auth.middleware");
 const expensesController = require("../controller/expenses.controller");
 
 router.get("/getAll", authorization, expensesController.getAll);
-router.post("/create", authorization, expensesController.create);
+router.post("/create/:id", authorization, expensesController.create);
 
 module.exports = router;

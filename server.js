@@ -27,12 +27,16 @@ app.use("/api/balans", require("./routes/balans.routes"));
 app.use("/api/invest", require("./routes/invest.routes"));
 app.use("/api/expenses", require("./routes/expenses.routes"));
 app.use(
-  "/api/categoryExpenses",
-  require("./routes/category/categoryExpenses.routes")
-);
-app.use(
   "/api/categoryInvest",
   require("./routes/category/categoryInvest.routes")
+);
+app.use(
+  "/api/departmentExpenses",
+  require("./routes/category/departmentExpenses.routes")
+);
+app.use(
+  "/api/categoryExpenses",
+  require("./routes/category/categoryExpenses.routes")
 );
 
 //  Mieddleware

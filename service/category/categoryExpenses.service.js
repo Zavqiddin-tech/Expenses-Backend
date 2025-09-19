@@ -1,4 +1,5 @@
-const categoryExpensesModel = require("../../model/category/categoryExpenses.model")
+const categoryExpensesModel = require("../../model/category/categoryExpenses.model");
+const departmentExpensesModel = require("../../model/category/departmentExpenses.model");
 
 class CategoryExpensesService {
   async getAll(req, res) {
@@ -7,17 +8,27 @@ class CategoryExpensesService {
   }
 
   async create(req, res) {
+    const isDepartment = await departmentExpensesModel.findById(req.params.id);
+    const categoryName = req.body.name.toLowerCase();
 
-		const categoryName = req.body.name.toLowerCase();
+    console.log(isDepartment);
 
-		const existingCategory = await categoryExpensesModel.findOne({ name: categoryName});
+    if (!isDepartment) {
+      throw new Error("Bo'lim topilmadi");
+    }
 
-		if (existingCategory) {
-			throw new Error("Bu kategoriya mavjud");
-		}
+    const existingCategory = await categoryExpensesModel.findOne({
+      name: categoryName,
+      department: req.params.id
+    });
+
+    if (existingCategory) {
+      throw new Error("Bu kategoriya mavjud");
+    }
 
     const newCategory = await categoryExpensesModel.create({
       name: categoryName,
+      department: req.params.id,
       user: req.user.id,
     });
     return newCategory;

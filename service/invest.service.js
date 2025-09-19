@@ -19,7 +19,6 @@ class InvestService {
   }
 
   async create(req, res) {
-    console.log(req.params.id);
     const isCategory = await categoryInvestModel.findById(req.params.id)
     if (req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");

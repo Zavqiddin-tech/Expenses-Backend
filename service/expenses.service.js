@@ -1,11 +1,16 @@
 const expensesModel = require("../model/expenses.model");
 const balansModel = require("../model/balans.model");
 const payModel = require("../model/pay.model");
+const departmentExpensesModel = require("../model/category/departmentExpenses.model");
+const categoryExpensesModel = require("../model/category/categoryExpenses.model");
 const fileService = require("./file.service");
 
 class ExpensesService {
   async getAll(req, res) {
-    const allExpensess = await expensesModel.find().sort({ createdAt: -1 }).populate("pay")
+    const allExpensess = await expensesModel
+      .find()
+      .sort({ createdAt: -1 })
+      .populate("pay");
     return allExpensess;
   }
 
@@ -17,8 +22,18 @@ class ExpensesService {
     if (balans.amount < req.body.amount) {
       throw new Error("Balansda pul yetarli emas");
     }
-
-    console.log(req.files);
+    const categoryExpenses = await categoryExpensesModel.findById(
+      req.params.id
+    );
+    if (!categoryExpenses) {
+      throw new Error("Kategoriya topilmadi");
+    }
+    const departmentExpenses = await departmentExpensesModel.findById(
+      categoryExpenses.department
+    );
+    if (!departmentExpenses) {
+      throw new Error("Bo'lim topilmadi");
+    }
 
     const payData = {
       amount: req.body.amount,
@@ -34,10 +49,10 @@ class ExpensesService {
     const expensesData = {
       title: req.body.title,
       body: req.body.body,
-      category: req.body.category,
+      category: req.params.id,
       pay: pay._id,
       user: req.user.id,
-      picture: []
+      picture: [],
     };
 
     if (req.files) {
@@ -49,7 +64,7 @@ class ExpensesService {
     console.log(expensesData);
 
     const newExpenses = await expensesModel.create(expensesData);
-    const updatedBalans = await balansModel.findByIdAndUpdate(
+    const upBalans = await balansModel.findByIdAndUpdate(
       balans._id,
       {
         $inc: { amount: -pay.amount },
@@ -57,8 +72,24 @@ class ExpensesService {
       },
       { new: true }
     );
+    const upDepartment = await departmentExpensesModel.findByIdAndUpdate(
+      categoryExpenses.department,
+      {
+        $inc: { amount: pay.amount },
+        $push: { history: pay._id },
+      },
+      { new: true }
+    );
+    const upCategory = await categoryExpensesModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $inc: { amount: pay.amount },
+        $push: { history: pay._id },
+      },
+      { new: true }
+    );
 
-    return { newExpenses, updatedBalans };
+    return { newExpenses, upBalans, upDepartment, upCategory };
   }
 }
 
