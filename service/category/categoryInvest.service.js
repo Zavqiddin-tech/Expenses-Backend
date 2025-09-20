@@ -5,8 +5,14 @@ class CategoryInvestService {
 		const allCategories = await categoryInvestModel.find();
 		return allCategories;
 	}
+	async getOne(req, res) {
+		const category = await categoryInvestModel.findById(req.params.id).populate({path: "history", options: {sort: {createdAt: -1}}});
+		return category;
+	}
 
 	async create(req, res) {
+
+		console.log(req.body);
 
 		const categoryName = req.body.name.toLowerCase();
 

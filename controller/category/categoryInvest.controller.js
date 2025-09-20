@@ -9,6 +9,14 @@ class CategoryInvestController {
       next(error);
     }
   }
+  async getOne(req, res, next) {
+    try {
+      const oneCategory = await categoryService.getOne(req, res);
+      res.status(200).json(oneCategory);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async create(req, res, next) {
     try {

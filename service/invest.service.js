@@ -29,13 +29,10 @@ class InvestService {
 
     const payData = {
       amount: req.body.amount,
+      text: req.body.text,
       method: 0,
       user: req.user.id,
     };
-
-    if (req.body.text) {
-      payData.text = req.body.text;
-    }
 
 
     const pay = await payModel.create(payData);

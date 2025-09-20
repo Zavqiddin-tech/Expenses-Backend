@@ -4,7 +4,7 @@ class DepartmentExpensesController {
   async getAll(req, res, next) {
     try {
       const allDepartment = await departmentService.getAll(req, res);
-      res.status(200).json(allCategories);
+      res.status(200).json(allDepartment);
     } catch (error) {
       next(error);
     }

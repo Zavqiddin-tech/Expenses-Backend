@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const paySchema = new Schema(
   {
     amount: { type: Number, required: true },
-    text: { type: String, default: "hech narsa" },
+    text: { type: String, required: true },
     user: { type: Schema.ObjectId, ref: "User", required: true },
 		method: {
       type: Number,
