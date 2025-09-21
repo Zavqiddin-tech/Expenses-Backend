@@ -9,6 +9,14 @@ class ExpensesController {
 			next(error);
 		}
 	}
+	async getByCategory(req, res, next) {
+		try {
+			const expenses = await expensesService.getByCategory(req, res);
+			res.status(200).json(expenses);
+		} catch (error) {
+			next(error);
+		}
+	}
 
 	async create(req, res, next) {
 		try {

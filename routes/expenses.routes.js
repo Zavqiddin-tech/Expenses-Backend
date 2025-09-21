@@ -4,6 +4,11 @@ const authorization = require("../middleware/auth.middleware");
 const expensesController = require("../controller/expenses.controller");
 
 router.get("/getAll", authorization, expensesController.getAll);
+router.get(
+  "/getByCategory/:id",
+  authorization,
+  expensesController.getByCategory
+);
 router.post("/create/:id", authorization, expensesController.create);
 
 module.exports = router;

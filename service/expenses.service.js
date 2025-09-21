@@ -14,6 +14,14 @@ class ExpensesService {
     return allExpensess;
   }
 
+  async getByCategory(req, res) {
+    const expenses = await expensesModel
+      .find({ category: req.params.id })
+      .populate("pay")
+      .sort({ createdAt: -1 });
+    return expenses;
+  }
+
   async create(req, res) {
     if (req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
@@ -89,7 +97,11 @@ class ExpensesService {
       { new: true }
     );
 
-    return { newExpenses, upBalans, upDepartment, upCategory };
+    const expenses = await expensesModel
+      .findById(newExpenses._id)
+      .populate("pay");
+
+    return expenses;
   }
 }
 

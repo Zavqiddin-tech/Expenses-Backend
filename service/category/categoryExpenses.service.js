@@ -3,9 +3,14 @@ const departmentExpensesModel = require("../../model/category/departmentExpenses
 
 class CategoryExpensesService {
   async getAll(req, res) {
-    const allCategories = await categoryExpensesModel.find();
+    const allCategories = await categoryExpensesModel.find({department: req.params.id});
     return allCategories;
   }
+
+    async getOne(req, res) {
+      const category = await categoryExpensesModel.findById(req.params.id).populate({path: "history", options: {sort: {createdAt: -1}}});
+      return category;
+    }
 
   async create(req, res) {
     const isDepartment = await departmentExpensesModel.findById(req.params.id);
