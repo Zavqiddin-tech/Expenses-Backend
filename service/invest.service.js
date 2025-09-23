@@ -20,7 +20,7 @@ class InvestService {
 
   async create(req, res) {
     const isCategory = await categoryInvestModel.findById(req.params.id);
-    if (req.body.amount <= 1000) {
+    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
     if (!isCategory) {
@@ -57,6 +57,10 @@ class InvestService {
   }
 
   async update(req, res) {
+    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    }
+
     const oldPay = await payModel.findById(req.params.payId);
 
     const newPay = await payModel.findByIdAndUpdate(
