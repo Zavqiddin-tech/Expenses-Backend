@@ -10,5 +10,6 @@ router.get(
   expensesController.getByCategory
 );
 router.post("/create/:id", authorization, expensesController.create);
+router.patch("/:id", authorization, expensesController.update);
 
 module.exports = router;

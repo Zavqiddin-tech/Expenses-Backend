@@ -13,8 +13,6 @@ class CategoryInvestService {
   }
 
   async create(req, res) {
-    console.log(req.body);
-
     const categoryName = req.body.name.toLowerCase();
 
     const existingCategory = await categoryInvestModel.findOne({

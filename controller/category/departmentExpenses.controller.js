@@ -18,6 +18,15 @@ class DepartmentExpensesController {
       next(error);
     }
   }
+
+  async update(req, res, next) {
+    try {
+      const newDepartment = await departmentService.update(req, res);
+      res.status(200).json(newDepartment);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new DepartmentExpensesController();

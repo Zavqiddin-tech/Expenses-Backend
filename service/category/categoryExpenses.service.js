@@ -3,20 +3,23 @@ const departmentExpensesModel = require("../../model/category/departmentExpenses
 
 class CategoryExpensesService {
   async getAll(req, res) {
-    const allCategories = await categoryExpensesModel.find({department: req.params.id});
+    const allCategories = await categoryExpensesModel.find({
+      department: req.params.id,
+    });
     return allCategories;
   }
 
-    async getOne(req, res) {
-      const category = await categoryExpensesModel.findById(req.params.id).populate({path: "history", options: {sort: {createdAt: -1}}});
-      return category;
-    }
+  async getOne(req, res) {
+    const category = await categoryExpensesModel
+      .findById(req.params.id)
+      .populate({ path: "history", options: { sort: { createdAt: -1 } } });
+    return category;
+  }
 
   async create(req, res) {
     const isDepartment = await departmentExpensesModel.findById(req.params.id);
     const categoryName = req.body.name.toLowerCase();
 
-    console.log(isDepartment);
 
     if (!isDepartment) {
       throw new Error("Bo'lim topilmadi");
@@ -24,7 +27,7 @@ class CategoryExpensesService {
 
     const existingCategory = await categoryExpensesModel.findOne({
       name: categoryName,
-      department: req.params.id
+      department: req.params.id,
     });
 
     if (existingCategory) {
@@ -38,6 +41,21 @@ class CategoryExpensesService {
     });
     return newCategory;
   }
+
+  async update(req, res) {
+      if (!req.body.name) {
+        throw new Error("Matn kiriting");
+      }
+      const upCategory = await categoryExpensesModel.findByIdAndUpdate(
+        req.params.id,
+        {
+          name: req.body.name,
+        },
+        {new: true}
+      );
+  
+      return upCategory;
+    }
 }
 
 module.exports = new CategoryExpensesService();

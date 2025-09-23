@@ -20,7 +20,7 @@ class InvestService {
 
   async create(req, res) {
     const isCategory = await categoryInvestModel.findById(req.params.id);
-    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
+    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
     if (!isCategory) {
@@ -57,7 +57,7 @@ class InvestService {
   }
 
   async update(req, res) {
-    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
+    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
 
@@ -65,7 +65,7 @@ class InvestService {
 
     const newPay = await payModel.findByIdAndUpdate(
       req.params.payId,
-      { amount: req.body.amount },
+      { amount: req.body.amount, text: req.body.text },
       { new: true }
     );
 
@@ -86,7 +86,7 @@ class InvestService {
       { new: true }
     );
 
-    return newPay
+    return newPay;
   }
 }
 

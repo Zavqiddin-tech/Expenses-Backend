@@ -26,6 +26,15 @@ class ExpensesController {
 			next(error);
 		}
 	}
+	
+	async update(req, res, next) {
+		try {
+			const newExpenses = await expensesService.update(req, res);
+			res.status(200).json(newExpenses);
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 module.exports = new ExpensesController();

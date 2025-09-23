@@ -5,5 +5,6 @@ const departmentExpensesController = require("../../controller/category/departme
 
 router.get("/getAll", authorization, departmentExpensesController.getAll);
 router.post("/create", authorization, departmentExpensesController.create);
+router.patch("/:id", authorization, departmentExpensesController.update);
 
 module.exports = router;

@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const expensesSchema = new Schema(
   {
     title: { type: String, required: true },
-    body: { type: String, required: true },
+    body: { type: String },
     user: { type: Schema.ObjectId, ref: "User", required: true },
     category: {
       type: Schema.ObjectId,

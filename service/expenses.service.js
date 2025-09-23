@@ -23,7 +23,7 @@ class ExpensesService {
   }
 
   async create(req, res) {
-    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
+    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
     const balans = await balansModel.findOne();
@@ -64,12 +64,9 @@ class ExpensesService {
     };
 
     if (req.files) {
-      console.log(req.files);
       const fileName = await fileService.save(req.files);
       expensesData.picture = Array.isArray(fileName) ? fileName : [...fileName];
     }
-
-    console.log(expensesData);
 
     const newExpenses = await expensesModel.create(expensesData);
     const upBalans = await balansModel.findByIdAndUpdate(
@@ -104,7 +101,63 @@ class ExpensesService {
     return expenses;
   }
 
-  
+  async update(req, res) {
+    if (!req.body.title) {
+      throw new Error("Ma'lumotlarni to'liq kiriting");
+    }
+    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    }
+
+    const upExpenses = await expensesModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title,
+        body: req.body.body,
+      },
+      { new: true }
+    );
+
+    const categoryId = upExpenses.category;
+    const payId = upExpenses.pay;
+    const pay = await payModel.findById(payId);
+
+    const upPay = await payModel.findByIdAndUpdate(
+      payId,
+      { amount: req.body.amount },
+      { new: true }
+    );
+    const upCategory = await categoryExpensesModel.findByIdAndUpdate(
+      categoryId,
+      {           
+        $inc: { amount: req.body.amount - pay.amount },
+      },
+      { new: true }
+    );
+
+    const departmentId = upCategory.department;
+    const upDepartment = await departmentExpensesModel.findByIdAndUpdate(
+      departmentId,
+      {
+        $inc: { amount: req.body.amount - pay.amount },
+      },
+      { new: true }
+    );
+    const balans = await balansModel.findOne();
+    await balansModel.findByIdAndUpdate(
+      balans._id,
+      {
+        $inc: { amount: pay.amount - req.body.amount },
+      },
+      { new: true }
+    );
+
+    const expenses = await expensesModel
+      .findById(req.params.id)
+      .populate("pay");
+
+    return expenses;
+  }
 }
 
 module.exports = new ExpensesService();

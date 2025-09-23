@@ -6,5 +6,6 @@ const categoryExpensesController = require("../../controller/category/categoryEx
 router.get("/getAll/:id", authorization, categoryExpensesController.getAll);
 router.get("/getOne/:id", authorization, categoryExpensesController.getOne);
 router.post("/create/:id", authorization, categoryExpensesController.create);
+router.patch("/:id", authorization, categoryExpensesController.update);
 
 module.exports = router;
