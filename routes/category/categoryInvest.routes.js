@@ -6,5 +6,6 @@ const categoryInvestController = require("../../controller/category/categoryInve
 router.get("/getAll", authorization, categoryInvestController.getAll);
 router.get("/getOne/:id", authorization, categoryInvestController.getOne);
 router.post("/create", authorization, categoryInvestController.create);
+router.patch("/:id", authorization, categoryInvestController.update);
 
 module.exports = router;

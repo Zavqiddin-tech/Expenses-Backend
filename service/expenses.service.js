@@ -23,7 +23,7 @@ class ExpensesService {
   }
 
   async create(req, res) {
-    if (req.body.amount <= 1000) {
+    if (typeof req.body.amount !== 'number' && req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
     const balans = await balansModel.findOne();
@@ -103,6 +103,8 @@ class ExpensesService {
 
     return expenses;
   }
+
+  
 }
 
 module.exports = new ExpensesService();

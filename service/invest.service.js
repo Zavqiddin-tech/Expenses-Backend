@@ -1,6 +1,6 @@
 const payModel = require("../model/pay.model");
 const balansModel = require("../model/balans.model");
-const categoryInvestModel = require("../model/category/categoryInvest.model")
+const categoryInvestModel = require("../model/category/categoryInvest.model");
 
 class InvestService {
   async getAll(req, res) {
@@ -19,11 +19,11 @@ class InvestService {
   }
 
   async create(req, res) {
-    const isCategory = await categoryInvestModel.findById(req.params.id)
+    const isCategory = await categoryInvestModel.findById(req.params.id);
     if (req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
-    if(!isCategory) {
+    if (!isCategory) {
       throw new Error("Sarmoya uchun kategoriya topilmadi");
     }
 
@@ -33,7 +33,6 @@ class InvestService {
       method: 0,
       user: req.user.id,
     };
-
 
     const pay = await payModel.create(payData);
     const balans = await balansModel.findOne();
@@ -55,6 +54,35 @@ class InvestService {
     );
 
     return { pay, newBalans, newCategoryInvest };
+  }
+
+  async update(req, res) {
+    const oldPay = await payModel.findById(req.params.payId);
+
+    const newPay = await payModel.findByIdAndUpdate(
+      req.params.payId,
+      { amount: req.body.amount },
+      { new: true }
+    );
+
+    await categoryInvestModel.findByIdAndUpdate(
+      req.params.routeId,
+      {
+        $inc: { amount: newPay.amount - oldPay.amount },
+      },
+      { new: true }
+    );
+
+    const balans = await balansModel.findOne();
+    await balansModel.findByIdAndUpdate(
+      balans._id,
+      {
+        $inc: { amount: newPay.amount - oldPay.amount },
+      },
+      { new: true }
+    );
+
+    return newPay
   }
 }
 

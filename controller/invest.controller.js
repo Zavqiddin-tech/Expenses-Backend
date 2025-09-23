@@ -27,6 +27,15 @@ class InvestController {
 			next(error);
 		}
 	}
+	
+	async update(req, res, next) {
+		try {
+			const newInvest = await investService.update(req, res);
+			res.status(200).json(newInvest);
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 module.exports = new InvestController();

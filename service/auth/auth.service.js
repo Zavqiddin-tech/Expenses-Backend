@@ -9,7 +9,7 @@ class AuthService {
     // if (role === "admin") {
     //   throw new Error("admin mavjud");
     // }
-    
+
     const existUser = await userModel.findOne({ userName });
 
     if (existUser) {
@@ -41,7 +41,7 @@ class AuthService {
 
   async login(userName, password) {
     const user = await userModel.findOne({ userName });
-    
+
     if (!user) {
       throw new Error("User mavjud emas");
     }
@@ -59,15 +59,21 @@ class AuthService {
     return { user: { ...userDto, id: null }, ...tokens };
   }
 
-  async checkUser(id) {
+  async checkUser(id, res) {
     const user = await userModel.findById(id);
-    const userDto = new UserDto(user);
-    return { ...userDto, id: null };
+    if (user._id) {
+      const userDto = new UserDto(user);
+      return { ...userDto, id: null };
+    } else {
+      res.status(401).json({ message: "Ruxsat berilmagan" });
+    }
   }
 
-  async checkAdmin(user, res) {
-    if (user.role !== "admin") {
-      res.status(401).json({ message: "Ruxsat berilmagan" });
+  async checkAdmin(id, res) {
+    const user = await userModel.findById(id);
+    if (user.role === "admin" || user.role === "director") {
+    } else {
+      res.status(403).json({ message: "bu bo'limga kira olmaysiz" });
     }
   }
 

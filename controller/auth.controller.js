@@ -38,7 +38,7 @@ class AuthController {
   // check
   async checkUser(req, res, next) {
     try {
-      const user = await authService.checkUser(req.user.id);
+      const user = await authService.checkUser(req.user.id, res);
       return res.json(user);
     } catch (error) {
       next(error);
@@ -46,7 +46,7 @@ class AuthController {
   }
   async checkAdmin(req, res, next) {
     try {
-      const data = await authService.checkAdmin(req.user, res);
+      const data = await authService.checkAdmin(req.user.id, res);
       return res.json(data);
     } catch (error) {
       next(error);

@@ -26,6 +26,15 @@ class CategoryInvestController {
       next(error);
     }
   }
+  
+  async update(req, res, next) {
+    try {
+      const newCategory = await categoryService.update(req, res);
+      res.status(200).json(newCategory);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new CategoryInvestController();

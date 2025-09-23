@@ -6,8 +6,9 @@ const router = express.Router();
 
 router.post("/regis", authorization, authController.regis);
 router.post("/login", authController.login);
-router.get("/checkuser", authorization, authController.checkUser);
 router.get("/getAll", authorization, authController.getAll);
+router.get("/checkuser", authorization, authController.checkUser);
+router.get("/checkadmin", authorization, authController.checkAdmin);
 // router.post("/logout", authController.logout);
 // router.get("/refresh", authController.refresh);
 // router.delete("/delete/:id", authorization, authController.deleteUser);
