@@ -23,19 +23,28 @@ class ExpensesService {
   }
 
   async create(req, res) {
-    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
-      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    if (typeof req.body.amount !== "number") {
+      throw new Error("Iltimos, raqam (son) kiriting");
     }
+    if (req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1 000 so'mdan katta qiymat kiriting");
+    }
+
+
     const balans = await balansModel.findOne();
     if (balans.amount < req.body.amount) {
       throw new Error("Balansda pul yetarli emas");
     }
+
+
     const categoryExpenses = await categoryExpensesModel.findById(
       req.params.id
     );
     if (!categoryExpenses) {
       throw new Error("Kategoriya topilmadi");
     }
+
+
     const departmentExpenses = await departmentExpensesModel.findById(
       categoryExpenses.department
     );
@@ -69,7 +78,7 @@ class ExpensesService {
     }
 
     const newExpenses = await expensesModel.create(expensesData);
-    const upBalans = await balansModel.findByIdAndUpdate(
+    await balansModel.findByIdAndUpdate(
       balans._id,
       {
         $inc: { amount: -pay.amount },
@@ -77,7 +86,7 @@ class ExpensesService {
       },
       { new: true }
     );
-    const upDepartment = await departmentExpensesModel.findByIdAndUpdate(
+    await departmentExpensesModel.findByIdAndUpdate(
       categoryExpenses.department,
       {
         $inc: { amount: pay.amount },
@@ -85,7 +94,7 @@ class ExpensesService {
       },
       { new: true }
     );
-    const upCategory = await categoryExpensesModel.findByIdAndUpdate(
+     await categoryExpensesModel.findByIdAndUpdate(
       req.params.id,
       {
         $inc: { amount: pay.amount },
@@ -105,11 +114,25 @@ class ExpensesService {
     if (!req.body.title) {
       throw new Error("Ma'lumotlarni to'liq kiriting");
     }
-    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
+    if (typeof req.body.amount !== "number" && req.body.amount <= 1000) {
       throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
     }
+    const existExpenses = await expensesModel.findById(req.params.id);
+    const balans = await balansModel.findOne();
+    const categoryId = existExpenses.category;
+    const payId = existExpenses.pay;
+    const pay = await payModel.findById(payId);
 
-    const upExpenses = await expensesModel.findByIdAndUpdate(
+    const paySum = pay.amount;
+    const balansSum = balans.amount;
+    const newPay = paySum - req.body.amount;
+    const total = balansSum + newPay;
+    console.log(total);
+    if (total < 0) {
+      throw new Error("Balans - minusga chiqib ketadi !!!");
+    }
+
+    await expensesModel.findByIdAndUpdate(
       req.params.id,
       {
         title: req.body.title,
@@ -118,32 +141,28 @@ class ExpensesService {
       { new: true }
     );
 
-    const categoryId = upExpenses.category;
-    const payId = upExpenses.pay;
-    const pay = await payModel.findById(payId);
-
-    const upPay = await payModel.findByIdAndUpdate(
+    await payModel.findByIdAndUpdate(
       payId,
       { amount: req.body.amount },
       { new: true }
     );
     const upCategory = await categoryExpensesModel.findByIdAndUpdate(
       categoryId,
-      {           
+      {
         $inc: { amount: req.body.amount - pay.amount },
       },
       { new: true }
     );
 
     const departmentId = upCategory.department;
-    const upDepartment = await departmentExpensesModel.findByIdAndUpdate(
+    await departmentExpensesModel.findByIdAndUpdate(
       departmentId,
       {
         $inc: { amount: req.body.amount - pay.amount },
       },
       { new: true }
     );
-    const balans = await balansModel.findOne();
+
     await balansModel.findByIdAndUpdate(
       balans._id,
       {

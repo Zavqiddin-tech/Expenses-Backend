@@ -19,13 +19,16 @@ class InvestService {
   }
 
   async create(req, res) {
+    if (typeof req.body.amount !== "number") {
+      throw new Error("Iltimos, raqam (son) kiriting");
+    }
+    if (req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1 000 so'mdan katta qiymat kiriting");
+    }
+
     const isCategory = await categoryInvestModel.findById(req.params.id);
-    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
-      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
-    }
-    if (!isCategory) {
-      throw new Error("Sarmoya uchun kategoriya topilmadi");
-    }
+    if (!isCategory._id) throw new Error("Kategoriya topilmadi");
+
 
     const payData = {
       amount: req.body.amount,
@@ -57,13 +60,25 @@ class InvestService {
   }
 
   async update(req, res) {
-    if (typeof req.body.amount !== "number" || req.body.amount <= 1000) {
-      throw new Error("Iltimos, 1000 so'mdan katta son kiriting");
+    if (typeof req.body.amount !== "number") {
+      throw new Error("Iltimos, raqam (son) kiriting");
+    }
+    if (req.body.amount <= 1000) {
+      throw new Error("Iltimos, 1000 so'mdan katta qiymat kiriting");
     }
 
-    const oldPay = await payModel.findById(req.params.payId);
+    const balans = await balansModel.findOne();
+    const pay = await payModel.findById(req.params.payId);
+    const balansSum = balans.amount
+    const paySum = pay.amount
+    const newPay = req.body.amount - paySum
+    const total = balansSum + newPay
+    if (total < 0) {
+      throw new Error("Balans - minusga chiqib ketadi !!!");
+    }
 
-    const newPay = await payModel.findByIdAndUpdate(
+
+    const upPay = await payModel.findByIdAndUpdate(
       req.params.payId,
       { amount: req.body.amount, text: req.body.text },
       { new: true }
@@ -72,21 +87,20 @@ class InvestService {
     await categoryInvestModel.findByIdAndUpdate(
       req.params.routeId,
       {
-        $inc: { amount: newPay.amount - oldPay.amount },
+        $inc: { amount: upPay.amount - pay.amount },
       },
       { new: true }
     );
 
-    const balans = await balansModel.findOne();
     await balansModel.findByIdAndUpdate(
       balans._id,
       {
-        $inc: { amount: newPay.amount - oldPay.amount },
+        $inc: { amount: upPay.amount - pay.amount },
       },
       { new: true }
     );
 
-    return newPay;
+    return upPay;
   }
 }
 
