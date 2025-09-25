@@ -35,6 +35,15 @@ class ExpensesController {
 			next(error);
 		}
 	}
+
+	async deleteItem(req, res, next) {
+		try {
+			const deletedItem = await expensesService.deleteItem(req, res);
+			res.status(200).json(deletedItem);
+		} catch (error) {
+			next(error);
+		}
+	}
 }
 
 module.exports = new ExpensesController();

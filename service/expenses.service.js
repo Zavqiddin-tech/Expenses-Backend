@@ -23,16 +23,17 @@ class ExpensesService {
   }
 
   async create(req, res) {
-    if (typeof req.body.amount !== "number") {
+    const amount = Number(req.body.amount)
+    if (typeof amount !== "number") {
       throw new Error("Iltimos, raqam (son) kiriting");
     }
-    if (req.body.amount <= 1000) {
+    if (amount <= 1000) {
       throw new Error("Iltimos, 1 000 so'mdan katta qiymat kiriting");
     }
 
 
     const balans = await balansModel.findOne();
-    if (balans.amount < req.body.amount) {
+    if (balans.amount < amount) {
       throw new Error("Balansda pul yetarli emas");
     }
 
@@ -53,7 +54,7 @@ class ExpensesService {
     }
 
     const payData = {
-      amount: req.body.amount,
+      amount: amount,
       user: req.user.id,
       method: 1,
     };
@@ -127,7 +128,6 @@ class ExpensesService {
     const balansSum = balans.amount;
     const newPay = paySum - req.body.amount;
     const total = balansSum + newPay;
-    console.log(total);
     if (total < 0) {
       throw new Error("Balans - minusga chiqib ketadi !!!");
     }
@@ -177,6 +177,46 @@ class ExpensesService {
 
     return expenses;
   }
-}
 
+  async deleteItem(req, res) {
+    const expenses = await expensesModel.findById(req.params.id).populate('pay')
+    const pay = await payModel.findById(expenses.pay._id)
+    const category = await categoryExpensesModel.findById(expenses.category)
+    const balans = await balansModel.findOne()
+
+   const delExpenses =  await expensesModel.findByIdAndDelete(req.params.id)
+    if (!delExpenses.title) {
+      throw new Error("Ma'lumot o'chirib yuborilmadi !");
+    }
+    if (Array.isArray(expenses.picture) && expenses.picture.length > 0) {
+      await fileService.deleteFile(expenses.picture)
+    }
+    await categoryExpensesModel.findByIdAndUpdate(
+        category._id,
+        {
+          $inc: { amount: -pay.amount },
+          $pull: {history: pay._id}
+        },
+        {new: true}
+    )
+    await departmentExpensesModel.findByIdAndUpdate(
+        category.department,
+        {
+          $inc: { amount: -pay.amount },
+          $pull: {history: pay._id}
+        },
+        {new: true}
+    )
+    await balansModel.findByIdAndUpdate(
+        balans._id,
+        {
+          $inc: { amount: pay.amount },
+        },
+        {new: true}
+    )
+
+    await payModel.findByIdAndDelete(pay._id)
+    return delExpenses
+  }
+}
 module.exports = new ExpensesService();

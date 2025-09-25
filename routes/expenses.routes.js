@@ -11,5 +11,6 @@ router.get(
 );
 router.post("/create/:id", authorization, expensesController.create);
 router.patch("/:id", authorization, expensesController.update);
+router.delete("/:id", authorization, expensesController.deleteItem)
 
 module.exports = router;

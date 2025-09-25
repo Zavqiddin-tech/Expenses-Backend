@@ -37,6 +37,35 @@ class FileService {
       throw new Error(`Error saving file: ${error}`);
     }
   }
+
+
+  async deleteFile(fileNames) {
+    try {
+      const currentDir = __dirname;
+      const staticDir = path.join(currentDir, "..", "static");
+
+      if (!Array.isArray(fileNames)) {
+        // Agar bitta rasm nomi kelgan bo'lsa, uni massivga aylantiramiz
+        fileNames = [fileNames];
+      }
+
+      for (const fileName of fileNames) {
+        const filePath = path.join(staticDir, fileName);
+
+        // Faylning mavjudligini tekshirish
+        if (fs.existsSync(filePath)) {
+          // Faylni o'chirish
+          fs.unlinkSync(filePath);
+        } else {
+          console.warn(`Ogohlantirish: Fayl topilmadi, o'chirib yuborilmadi: ${fileName}`);
+        }
+      }
+      return true;
+    } catch (error) {
+      // Agar o'chirishda xatolik yuz bersa (ruxsatlar, blokirovka va h.k.)
+      throw new Error(`Faylni o'chirishda xatolik: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new FileService();
