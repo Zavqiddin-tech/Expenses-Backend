@@ -2,7 +2,6 @@ const argon2 = require("argon2");
 const tokenService = require("./token.service");
 const userModel = require("../../model/user.model");
 const UserDto = require("../../dto/user.dto");
-const balansModel = require("../../model/balans.model");
 
 class AuthService {
   async regis(fName, lName, userName, password, activated, role) {
@@ -43,12 +42,12 @@ class AuthService {
     const user = await userModel.findOne({ userName });
 
     if (!user) {
-      throw new Error("User mavjud emas");
+      throw new Error("Login yoki parol xato");
     }
 
     const isPassword = await argon2.verify(user.password, password);
     if (!isPassword) {
-      throw new Error("Parol xato");
+      throw new Error("Login yoki parol xato");
     }
     if (!user.activated) {
       throw new Error("Sizning akkauntingiz bloklangan");

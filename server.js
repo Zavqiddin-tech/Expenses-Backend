@@ -31,6 +31,7 @@ app.use(
   "/api/categoryExpenses",
   require("./routes/category/categoryExpenses.routes")
 );
+app.use("/api/report", require("./routes/report.routes"))
 
 //  Mieddleware
 app.use(errorMiddleware);

@@ -5,7 +5,7 @@ const paySchema = new Schema(
     amount: { type: Number, required: true },
     text: { type: String },
     user: { type: Schema.ObjectId, ref: "User", required: true },
-		method: {
+      method: {
       type: Number,
       enum: [0, 1],
       required: true,
