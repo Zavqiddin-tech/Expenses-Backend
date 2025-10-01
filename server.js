@@ -32,6 +32,11 @@ app.use(
   require("./routes/category/categoryExpenses.routes")
 );
 app.use("/api/report", require("./routes/report.routes"))
+// Rent
+app.use("/api/rentBalans", require("./routes/rent/rentBalans.routes"))
+app.use("/api/rentCategory", require("./routes/rent/rentCategory.routes"))
+app.use("/api/rentPayment", require("./routes/rent/rentPayment.routes"))
+
 
 //  Mieddleware
 app.use(errorMiddleware);

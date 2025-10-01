@@ -30,7 +30,8 @@ class ReportService {
         for (let e of data) {
             if(e._id === 0) {
                 result.kirim = e.total
-            } else {
+            }
+            if(e._id === 1) {
                 result.chiqim = e.total
             }
         }
