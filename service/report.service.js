@@ -14,7 +14,7 @@ class ReportService {
                     method: { $in: [ 0, 1] },
                     createdAt: {
                         $gte: monthStart,
-                        $lte: monthFinish,
+                        $lt: monthFinish,
                     }
                 },
             },
@@ -36,6 +36,43 @@ class ReportService {
             }
         }
         return result;
+    }
+    async chooseDate(req, res) {
+        const day = parseInt(req.query.day)
+        const month = parseInt(req.query.month)
+        const year = parseInt(req.query.year)
+
+        const monthFinish = new Date(year, month - 1, day + 1)
+
+        const data = await payModel.aggregate([
+            {
+                $match: {
+                    method: { $in: [ 0, 1] },
+                    createdAt: {
+                        $lt: monthFinish,
+                    }
+                },
+            },
+            {
+                $group: {
+                    _id: "$method",
+                    total: { $sum: "$amount" }
+                }
+            }
+        ])
+
+        const state = {kirim: 0, chiqim: 0}
+        for (let e of data) {
+            if(e._id === 0) {
+                state.kirim = e.total
+            }
+            if(e._id === 1) {
+                state.chiqim = e.total
+            }
+        }
+
+        const sum = state.kirim - state.chiqim
+        return sum;
     }
 }
 

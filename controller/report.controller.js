@@ -9,6 +9,14 @@ class InvestController {
             next(error);
         }
     }
+    async chooseDate(req, res, next) {
+        try {
+            const chooseDate = await reportService.chooseDate(req, res);
+            res.status(200).json(chooseDate);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new InvestController();
