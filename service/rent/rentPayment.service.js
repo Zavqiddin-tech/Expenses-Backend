@@ -26,6 +26,8 @@ class RentPaymentService {
     const payData = {
       amount: req.body.amount,
       title: req.body.title,
+      month: req.body.month,
+      year: req.body.year,
       method: 0,
       user: req.user.id,
       categoryId: req.params.id,
@@ -68,9 +70,9 @@ class RentPaymentService {
     if (!pay || !balans) {
       throw new Error("Balans yoki to'lov topilmadi");
     }
-    const balansSum = balans.amount; // 5
-    const paySum = pay.amount; // 5
-    const newPay = req.body.amount - paySum; // 1 - 4 = -3
+    const balansSum = balans.amount;
+    const paySum = pay.amount;
+    const newPay = req.body.amount - paySum;
     const total = balansSum + newPay;
 
     if (total < 0 || typeof total !== "number") {
@@ -79,7 +81,13 @@ class RentPaymentService {
 
     const upPay = await rentPaymentModel.findByIdAndUpdate(
       req.params.payId,
-      { amount: req.body.amount, text: req.body.text },
+      {
+        amount: req.body.amount,
+        title: req.body.title,
+        text: req.body.text,
+        month: req.body.month,
+        year: req.body.year,
+      },
       { new: true }
     );
 

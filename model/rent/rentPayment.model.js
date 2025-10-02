@@ -5,6 +5,8 @@ const rentPaymentSchema = new Schema(
         amount: { type: Number, required: true },
         title: { type: String, required: true },
         text: { type: String },
+        month: { type: Number, required: true },
+        year: { type: Number, required: true },
         user: { type: Schema.ObjectId, ref: "User", required: true },
         categoryId: { type: Schema.ObjectId, ref: "RentCategory" },
         method: {
