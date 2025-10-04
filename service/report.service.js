@@ -1,79 +1,110 @@
-const payModel = require("../model/pay.model")
+const payModel = require("../model/pay.model");
 
 class ReportService {
-    async thisMonth(req, res) {
-        const year = parseInt(req.query.year)
-        const month = parseInt(req.query.month)
+  async thisMonth(req, res) {
+    const year = parseInt(req.query.year);
+    const month = parseInt(req.query.month);
 
-        const monthStart = new Date(year, month, 1)
-        const monthFinish = new Date(year, month + 1, 1)
+    const monthStart = new Date(year, month, 1);
+    const monthFinish = new Date(year, month + 1, 1);
 
-        const data = await payModel.aggregate([
-            {
-                $match: {
-                    method: { $in: [ 0, 1] },
-                    createdAt: {
-                        $gte: monthStart,
-                        $lt: monthFinish,
-                    }
-                },
-            },
-            {
-                $group: {
-                    _id: "$method",
-                    total: { $sum: "$amount" }
-                }
-            }
-        ])
+    const data = await payModel.aggregate([
+      {
+        $match: {
+          method: { $in: [0, 1] },
+          createdAt: {
+            $gte: monthStart,
+            $lt: monthFinish,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$method",
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
 
-        const result = {kirim: 0, chiqim: 0}
-        for (let e of data) {
-            if(e._id === 0) {
-                result.kirim = e.total
-            }
-            if(e._id === 1) {
-                result.chiqim = e.total
-            }
-        }
-        return result;
+    const result = { kirim: 0, chiqim: 0 };
+    for (let e of data) {
+      if (e._id === 0) {
+        result.kirim = e.total;
+      }
+      if (e._id === 1) {
+        result.chiqim = e.total;
+      }
     }
-    async chooseDate(req, res) {
-        const day = parseInt(req.query.day)
-        const month = parseInt(req.query.month)
-        const year = parseInt(req.query.year)
+    return result;
+  }
 
-        const monthFinish = new Date(year, month - 1, day + 1)
+  async chooseDate(req, res) {
+    const day = parseInt(req.query.day);
+    const month = parseInt(req.query.month);
+    const year = parseInt(req.query.year);
 
-        const data = await payModel.aggregate([
-            {
-                $match: {
-                    method: { $in: [ 0, 1] },
-                    createdAt: {
-                        $lt: monthFinish,
-                    }
-                },
-            },
-            {
-                $group: {
-                    _id: "$method",
-                    total: { $sum: "$amount" }
-                }
-            }
-        ])
+    const monthFinish = new Date(year, month - 1, day + 1);
 
-        const state = {kirim: 0, chiqim: 0}
-        for (let e of data) {
-            if(e._id === 0) {
-                state.kirim = e.total
-            }
-            if(e._id === 1) {
-                state.chiqim = e.total
-            }
-        }
+    const data = await payModel.aggregate([
+      {
+        $match: {
+          method: { $in: [0, 1] },
+          createdAt: {
+            $lt: monthFinish,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$method",
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
 
-        const sum = state.kirim - state.chiqim
-        return sum;
+    const state = { kirim: 0, chiqim: 0 };
+    for (let e of data) {
+      if (e._id === 0) {
+        state.kirim = e.total;
+      }
+      if (e._id === 1) {
+        state.chiqim = e.total;
+      }
     }
+
+    const sum = state.kirim - state.chiqim;
+    return sum;
+  }
+
+  async percent(req, res) {
+    const data = await payModel.aggregate([
+      {
+        $match: {
+          method: { $in: [0, 1] },
+        },
+      },
+      {
+        $group: {
+          _id: "$method",
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+    
+
+    const result = { kirim: 0, chiqim: 0 };
+    for (let e of data) {
+      if (e._id === 0) {
+        result.kirim = e.total;
+      }
+      if (e._id === 1) {
+        result.chiqim = e.total;
+      }
+    }
+    const sum = result.chiqim / result.kirim;
+    const percent = (sum * 100).toFixed(2);
+    return percent;
+  }
 }
 
-module.exports = new ReportService()
+module.exports = new ReportService();

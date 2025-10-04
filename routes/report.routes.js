@@ -5,5 +5,6 @@ const reportController = require("../controller/report.controller");
 
 router.get("/this-month", authorization, reportController.thisMonth);
 router.get("/choose-date", authorization, reportController.chooseDate);
+router.get("/percent", authorization, reportController.percent);
 
 module.exports = router;

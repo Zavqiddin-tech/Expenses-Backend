@@ -17,6 +17,14 @@ class InvestController {
             next(error);
         }
     }
+    async percent(req, res, next) {
+        try {
+            const percent = await reportService.percent(req, res);
+            res.status(200).json(percent);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new InvestController();
