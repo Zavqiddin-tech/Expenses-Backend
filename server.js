@@ -34,7 +34,7 @@ app.use(
 app.use("/api/report", require("./routes/report.routes"))
 // Rent
 app.use("/api/rentBalans", require("./routes/rent/rentBalans.routes"))
-app.use("/api/rentCategory", require("./routes/rent/rentCategory.routes"))
+app.use("/api/rentClient", require("./routes/rent/rentClient.routes"))
 app.use("/api/rentPayment", require("./routes/rent/rentPayment.routes"))
 
 

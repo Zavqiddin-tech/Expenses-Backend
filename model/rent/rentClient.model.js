@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const rentCategorySchema = new Schema(
+const rentClientSchema = new Schema(
   {
     name: { type: String, required: true },
     amount: { type: Number, default: 0},
@@ -9,4 +9,4 @@ const rentCategorySchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("RentCategory", rentCategorySchema);
+module.exports = model("RentClient", rentClientSchema);
