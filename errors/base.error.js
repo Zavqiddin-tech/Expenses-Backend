@@ -15,4 +15,7 @@ module.exports = class BaseError extends Error {
 	static BadRequest(message, errors = []) {
 		return new BaseError(400, message, errors)
 	}
+	static ForBidden(message, errors = []) {
+		return new BaseError(403, message, errors)
+	}
 }

@@ -9,7 +9,7 @@ const userSchema = new Schema(
     activated: { type: Boolean, default: true },
     role: {
       type: String,
-      enum: ["admin", "director", "manager"],
+      enum: ["admin", "director", "manager", "auditor"],
       required: true,
     }
   },

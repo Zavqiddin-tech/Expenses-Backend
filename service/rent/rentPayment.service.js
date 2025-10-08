@@ -5,7 +5,7 @@ const rentClientModel = require("../../model/rent/rentClient.model");
 class RentPaymentService {
   async getAll(req, res) {
     const allPayments = await rentPaymentModel
-      .find({ clientId: req.params.id, method: 0 })
+      .find({ clientId: req.params.id })
       .sort({ createdAt: -1 });
     return allPayments;
   }
@@ -21,7 +21,7 @@ class RentPaymentService {
     if (!balans) throw new Error("Balans topilmadi");
     const isClient = await rentClientModel.findById(req.params.id);
 
-    if (!isclient) throw new Error("Mijoz topilmadi");
+    if (!isClient) throw new Error("Mijoz topilmadi");
 
     if (req.body.debt === true) {
       const payData = {
