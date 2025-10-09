@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authorization = require("../../middleware/auth.middleware");
-const auditorblock = require("../../middleware/auditor.middleware");
+const auditorblock = require("../../middleware/auditorblock.middleware");
 const departmentExpensesController = require("../../controller/category/departmentExpenses.controller");
 
 router.get("/getAll", authorization, departmentExpensesController.getAll);

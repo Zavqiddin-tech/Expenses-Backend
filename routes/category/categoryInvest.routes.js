@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authorization = require("../../middleware/auth.middleware");
-const auditorblock = require("../../middleware/auditor.middleware");
+const auditorblock = require("../../middleware/auditorblock.middleware");
 const categoryInvestController = require("../../controller/category/categoryInvest.controller");
 
 router.get("/getAll", authorization, categoryInvestController.getAll);

@@ -36,6 +36,7 @@ app.use("/api/report", require("./routes/report.routes"))
 app.use("/api/rentBalans", require("./routes/rent/rentBalans.routes"))
 app.use("/api/rentClient", require("./routes/rent/rentClient.routes"))
 app.use("/api/rentPayment", require("./routes/rent/rentPayment.routes"))
+app.use("/api/rentWithdraw", require("./routes/rent/rentWithdraw.routes"))
 
 
 //  Mieddleware
@@ -47,7 +48,7 @@ const bootstrap = async () => {
     await mongoose
       .connect(process.env.DB_URL)
     app.listen(PORT, () => {
-      console.log(`Server - ${PORT} da ishga tushdi`);
+      console.log(`Server - ${PORT}: portda ishga tushdi`);
     });
   } catch (error) {
     console.log(`Error conecting with DB: ${error}`);

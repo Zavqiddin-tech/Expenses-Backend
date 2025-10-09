@@ -11,7 +11,7 @@ const rentPaymentSchema = new Schema(
         clientId: { type: Schema.ObjectId, ref: "RentClient" },
         method: {
             type: Number,
-            enum: [0, 1, 2],
+            enum: [0, 1],
             required: true,
         }
     },
@@ -20,6 +20,5 @@ const rentPaymentSchema = new Schema(
 
 // 0 - ijara, tokdan tushgan pullar
 // 1 - qarzdorlik summasi - necha pul qarzdorlik oshgan
-// 2 - rahbarga divident berilgan pul, chiqim
 
 module.exports = model("RentPayment", rentPaymentSchema);

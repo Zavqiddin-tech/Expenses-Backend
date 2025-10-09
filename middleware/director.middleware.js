@@ -2,7 +2,7 @@ const BaseError = require("../errors/base.error");
 
 module.exports = function (req, res, next) {
     try {
-        if (req.user.role !== "admin") {
+        if (req.user.role !== "director") {
             return next(BaseError.ForBidden("sizga mumkin emas !"));
         }
         next();
