@@ -1,17 +1,20 @@
 const { Schema, model } = require("mongoose");
 
 const paySchema = new Schema(
-  {
-    amount: { type: Number, required: true },
-    text: { type: String },
-    user: { type: Schema.ObjectId, ref: "User", required: true },
-      method: {
-      type: Number,
-      enum: [0, 1],
-      required: true,
-    }
-  },
-  { timestamps: true }
+    {
+        amount: { type: Number, required: true },
+        text: { type: String },
+        user: { type: Schema.ObjectId, ref: "User", required: true },
+        investId: { type: Schema.ObjectId, ref: "CategoryInvest" },
+        categoryId: { type: Schema.ObjectId, ref: "CategoryExpenses" },
+        departmentId: { type: Schema.ObjectId, ref: "DepartmentExpenses", },
+        method: {
+            type: Number,
+            enum: [0, 1],
+            required: true,
+        }
+    },
+    { timestamps: true }
 );
 
 // 0 - kirim, 1 - chiqim

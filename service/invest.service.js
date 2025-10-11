@@ -7,9 +7,10 @@ class InvestService {
     const limit = parseInt(req.query.limit);
 
     const allInvests = await payModel
-      .find({ method: 0 })
-      .sort({ createdAt: -1 })
-      .limit(limit);
+        .find({ method: 0 })
+        .sort({ createdAt: -1 })
+        .limit(limit);
+
     return allInvests;
   }
 
@@ -34,26 +35,27 @@ class InvestService {
       amount: req.body.amount,
       text: req.body.text,
       method: 0,
+      investId: isCategory._id,
       user: req.user.id,
     };
 
     const pay = await payModel.create(payData);
     const balans = await balansModel.findOne();
     const newBalans = await balansModel.findByIdAndUpdate(
-      balans._id,
-      {
-        $inc: { amount: pay.amount },
-        $push: { history: pay._id },
-      },
-      { new: true }
+        balans._id,
+        {
+          $inc: { amount: pay.amount },
+          $push: { history: pay._id },
+        },
+        { new: true }
     );
     const newCategoryInvest = await categoryInvestModel.findByIdAndUpdate(
-      req.params.id,
-      {
-        $inc: { amount: pay.amount },
-        $push: { history: pay._id },
-      },
-      { new: true }
+        req.params.id,
+        {
+          $inc: { amount: pay.amount },
+          $push: { history: pay._id },
+        },
+        { new: true }
     );
 
     return { pay, newBalans, newCategoryInvest };
@@ -79,25 +81,25 @@ class InvestService {
 
 
     const upPay = await payModel.findByIdAndUpdate(
-      req.params.payId,
-      { amount: req.body.amount, text: req.body.text },
-      { new: true }
+        req.params.payId,
+        { amount: req.body.amount, text: req.body.text },
+        { new: true }
     );
 
     await categoryInvestModel.findByIdAndUpdate(
-      req.params.routeId,
-      {
-        $inc: { amount: upPay.amount - pay.amount },
-      },
-      { new: true }
+        req.params.routeId,
+        {
+          $inc: { amount: upPay.amount - pay.amount },
+        },
+        { new: true }
     );
 
     await balansModel.findByIdAndUpdate(
-      balans._id,
-      {
-        $inc: { amount: upPay.amount - pay.amount },
-      },
-      { new: true }
+        balans._id,
+        {
+          $inc: { amount: upPay.amount - pay.amount },
+        },
+        { new: true }
     );
 
     return upPay;
